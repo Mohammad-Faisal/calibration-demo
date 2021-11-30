@@ -1,4 +1,3 @@
-import React from "react";
 import { Point } from "@amagroup.io/amag-corelib";
 const MAP_API_KEY = "AIzaSyBmzhL0YQYCgC2ljr1gaJM7T9frvXPCF_A";
 

@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import { ZoomController } from "./ZoomController";
-import { DraggableShape } from "./DraggableShape";
-import { PointScalingUtility } from "./utils/PointScalingUtility";
+import { ZoomController, DraggableShape, PolyLineComponent } from "./misc";
+import { CanvasUtility, PointScalingUtility } from "./utils";
 import { StaticMapProps, StaticMapSrc } from "./StaticMapImage";
 import { ImageType } from "./SimplifiedCalibrationContainer";
-import { PolyLineComponent } from "./PolyLineComponent";
-import { CanvasUtility } from "./utils/CanvasUtility";
 
 export interface ShapePoint {
   index: number;

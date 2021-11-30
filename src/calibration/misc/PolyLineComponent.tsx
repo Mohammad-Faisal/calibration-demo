@@ -1,4 +1,4 @@
-import { ShapePoint } from "./CalibrationCanvas";
+import { ShapePoint } from "../CalibrationCanvas";
 
 interface PolyLineProps {
   points: ShapePoint[];
