@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CalibrationData } from "@amagroup.io/amag-corelib";
-import { ShapePoint } from "../CalibrationCanvas";
+import { ShapePoint } from "../SimplifiedCalibrationCanvas";
 
 export const useCalibrationToShapePointConverter = (calibrationData: CalibrationData | undefined) => {
   const [staticImagePoints, setStaticImagePoints] = useState<ShapePoint[]>([]);

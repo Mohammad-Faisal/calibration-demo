@@ -1,4 +1,4 @@
-import { StaticMapProps } from "./../StaticMapImage";
+import { StaticMapProps } from "../misc/StaticMapImage";
 export class MapUtility {
   static getMapCoordinates = (mouseX: number, mouseY: number, mapOptions: StaticMapProps) => {
     const lat = mapOptions.lat;

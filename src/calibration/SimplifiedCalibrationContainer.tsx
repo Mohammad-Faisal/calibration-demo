@@ -1,11 +1,9 @@
 import { Button } from "@material-ui/core";
 import { useState, useEffect } from "react";
-import { CalibrationCanvas, ShapePoint } from "./CalibrationCanvas";
+import { CalibrationCanvas, ShapePoint } from "./SimplifiedCalibrationCanvas";
 import { CalibrationStatus } from "./misc";
 import { MapUtility } from "./utils";
-import { ColorPicker, useColor } from "react-color-palette";
-import "react-color-palette/lib/css/styles.css";
-import { StaticMapProps } from "./StaticMapImage";
+import { StaticMapProps } from "./misc/StaticMapImage";
 import { CalibrationData, HomographyPoint } from "@amagroup.io/amag-corelib";
 import { useCalibrationToShapePointConverter, useCalibrationLineValidityChecker } from "./hooks";
 
@@ -40,7 +38,7 @@ export const SimplifiedCalibrationComponent = ({
   const { isImageLineValid: isSecondImageLineValid, isMapLineValid: isSecondMapLineValid } =
     useCalibrationLineValidityChecker(thirdPoint, fourthPoint);
 
-  const [color, setColor] = useColor("hex", "#f51717");
+  const color = "#f51717";
 
   const { staticImagePoints, mapImagePoints } = useCalibrationToShapePointConverter(calibrationData);
 
@@ -119,20 +117,18 @@ export const SimplifiedCalibrationComponent = ({
   return (
     <div style={{ display: "grid", justifyItems: "center", gridGap: "10px", width: "100vw" }}>
       <div style={{ display: "flex", gap: "20px", flexGrow: "1" }}>
-        <ColorPicker width={200} height={200} color={color} onChange={setColor} hideHSV dark />
-
         <CalibrationCanvas
           isEditMode={isEditMode}
           imagePath={staticImageSrc}
           imageType={ImageType.STATIC_IMAGE}
-          fillColor={color.hex}
+          fillColor={color}
           onDataChangeTrigger={receiveData}
           points={staticImagePoints}
         />
         <CalibrationCanvas
           isEditMode={isEditMode}
           imageType={ImageType.STATIC_MAP}
-          fillColor={color.hex}
+          fillColor={color}
           staticMapProps={staticMapProps}
           onDataChangeTrigger={receiveData}
           points={mapImagePoints}
