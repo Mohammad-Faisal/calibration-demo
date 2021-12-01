@@ -1,11 +1,12 @@
+import React from "react";
 import { Button } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import { CalibrationCanvas, ShapePoint } from "./SimplifiedCalibrationCanvas";
 import { CalibrationStatus } from "./misc";
 import { MapUtility } from "./utils";
 import { StaticMapProps } from "./misc/StaticMapImage";
-import { CalibrationData, HomographyPoint } from "@amagroup.io/amag-corelib";
 import { useCalibrationToShapePointConverter, useCalibrationLineValidityChecker } from "./hooks";
+import { CalibrationData, HomographyPoint } from "@amagroup.io/amag-corelib";
 
 export enum ImageType {
   STATIC_IMAGE,

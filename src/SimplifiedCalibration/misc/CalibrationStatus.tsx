@@ -1,4 +1,5 @@
-import { IconButton, makeStyles, Slider } from "@material-ui/core";
+import React from 'react'
+import { IconButton, makeStyles } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
 import BlockOutlined from "@material-ui/icons/BlockOutlined";
 interface CalibrationStatusProps {

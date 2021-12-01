@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { SimplifiedCalibrationComponent } from "./calibration/SimplifiedCalibrationContainer";
 import { CalibrationData, SurveyCalibration } from "@amagroup.io/amag-corelib";
-import { StaticMapProps } from "./calibration/misc/StaticMapImage";
+import { StaticMapProps, SimplifiedCalibrationComponent } from "./SimplifiedCalibration";
 const normalImageUrl =
   "https://media.istockphoto.com/photos/road-in-mountains-picture-id491712724?k=20&m=491712724&s=612x612&w=0&h=Jm11Gd2r3G__G1ob1n3fMkmkgalzaJw79mT4DQD2yRc=";
 

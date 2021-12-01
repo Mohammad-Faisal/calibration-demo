@@ -1,5 +1,7 @@
 import { Point } from "@amagroup.io/amag-corelib";
-const MAP_API_KEY = "AIzaSyBmzhL0YQYCgC2ljr1gaJM7T9frvXPCF_A";
+import React from "react";
+
+const MAP_API = "AIzaSyBJJSsnG7RP4hvuA65gZoacldJmVyQepFs";
 
 function componentToHex(c: any) {
   const hex = c.toString(16);
@@ -88,7 +90,7 @@ export function StaticMapSrc(props: StaticMapProps): string {
 
   return `https://maps.googleapis.com/maps/api/staticmap?center=${props.lat},${props.lng}&zoom=${
     props.zoom || 20
-  }&scale=${scale}&size=${width}x${height}&maptype=${props.mapType || "map"}&key=${MAP_API_KEY}${
+  }&scale=${scale}&size=${width}x${height}&maptype=${props.mapType || "map"}&key=${MAP_API}${
     hideLabels
       ? "&style=feature:all|element:labels|visibility:off&style=feature:road|element:labels|visibility:off"
       : ""

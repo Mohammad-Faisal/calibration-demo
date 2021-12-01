@@ -1,3 +1,4 @@
+import React from 'react'
 import { IconButton, makeStyles, Slider } from "@material-ui/core";
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
