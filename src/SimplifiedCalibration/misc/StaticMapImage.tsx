@@ -1,7 +1,7 @@
 import { Point } from "@amagroup.io/amag-corelib";
 import React from "react";
 
-const MAP_API = "AIzaSyBJJSsnG7RP4hvuA65gZoacldJmVyQepFs";
+const MAP_API = "AIzaSyBJJSsnG7RP4hvuA65gZoacldJmVyQepF";
 
 function componentToHex(c: any) {
   const hex = c.toString(16);
