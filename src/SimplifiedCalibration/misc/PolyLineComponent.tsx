@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { ShapePoint } from "../SimplifiedCalibrationCanvas";
 
 interface PolyLineProps {

@@ -21,6 +21,15 @@ interface SimplifiedCalibrationProps {
   triggerCalibrationDataChange: (data: CalibrationData) => void;
 }
 
+const emptyData = [
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 0 },
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 1 },
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 2 },
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 3 },
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 4 },
+  { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 5 },
+];
+
 export const SimplifiedCalibrationComponent = ({
   isEditMode,
   staticImageSrc,
@@ -28,41 +37,33 @@ export const SimplifiedCalibrationComponent = ({
   triggerCalibrationDataChange,
   calibrationData,
 }: SimplifiedCalibrationProps) => {
-  const [firstPoint, setFirstPoint] = useState<HomographyPoint | undefined>();
-  const [secondPoint, setSecondPoint] = useState<HomographyPoint | undefined>();
-  const [thirdPoint, setThirdPoint] = useState<HomographyPoint | undefined>();
-  const [fourthPoint, setFourthPoint] = useState<HomographyPoint | undefined>();
+  const [homographyPoints, setHomographyPoints] = useState<HomographyPoint[]>(emptyData);
 
-  const { isImageLineValid: isFirstImageLineValid, isMapLineValid: isFirstMapLineValid } =
-    useCalibrationLineValidityChecker(firstPoint, secondPoint);
+  console.log("calibration data is ", calibrationData);
+  // const { isImageLineValid: isFirstImageLineValid, isMapLineValid: isFirstMapLineValid } =
+  //   useCalibrationLineValidityChecker(firstPoint, secondPoint);
 
-  const { isImageLineValid: isSecondImageLineValid, isMapLineValid: isSecondMapLineValid } =
-    useCalibrationLineValidityChecker(thirdPoint, fourthPoint);
+  // const { isImageLineValid: isSecondImageLineValid, isMapLineValid: isSecondMapLineValid } =
+  //   useCalibrationLineValidityChecker(thirdPoint, fourthPoint);
 
   const color = "#f51717";
 
   const { staticImagePoints, mapImagePoints } = useCalibrationToShapePointConverter(calibrationData);
 
   // convert the calibration data form the parent into the points data for this component
-  useEffect(() => {
-    if (!calibrationData) return;
-    console.log("need to process", calibrationData);
-    setFirstPoint(calibrationData?.Lines[0].points[0]);
-    setSecondPoint(calibrationData?.Lines[0].points[1]);
-    setThirdPoint(calibrationData?.Lines[1].points[0]);
-    setFourthPoint(calibrationData?.Lines[1].points[1]);
-  }, [calibrationData]);
 
   const calculateHomographyPointFromShapePointData = (
     prev: HomographyPoint | undefined,
     newData: ShapePoint,
     imageType: ImageType,
     index: number
-  ) => {
+  ): HomographyPoint | undefined => {
     if (!newData) return;
-    let newPoint;
+    let newPoint: HomographyPoint;
+
     if (prev) newPoint = { ...prev };
     else newPoint = { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index };
+
     if (imageType === ImageType.STATIC_IMAGE) {
       newPoint.x = newData.x;
       newPoint.y = newData.y;
@@ -73,46 +74,46 @@ export const SimplifiedCalibrationComponent = ({
       newPoint.lat = coOrdinates.Lat;
       newPoint.lng = coOrdinates.Lng;
     }
+    // console.log("new points is ", newPoint);
+
     return newPoint;
   };
 
   const receiveData = (data: ShapePoint[], imageType: ImageType) => {
-    if (data.length === 0) return;
-    if (data.length > 0)
-      setFirstPoint((prev) => calculateHomographyPointFromShapePointData(prev, data[0], imageType, 0));
-    if (data.length > 1)
-      setSecondPoint((prev) => calculateHomographyPointFromShapePointData(prev, data[1], imageType, 1));
-    if (data.length > 2)
-      setThirdPoint((prev) => calculateHomographyPointFromShapePointData(prev, data[2], imageType, 0));
-    if (data.length > 3)
-      setFourthPoint((prev) => calculateHomographyPointFromShapePointData(prev, data[3], imageType, 1));
+    // const currentLength = data.length;
+    const currentLength = homographyPoints.length;
+    const newHomographyPoints: HomographyPoint[] = [];
+    for (let i = 0; i < currentLength; i++) {
+      const oldPoint = homographyPoints[i];
+      if (data[i]) {
+        const homographyPoint = calculateHomographyPointFromShapePointData(oldPoint, data[i], imageType, i);
+        if (homographyPoint) newHomographyPoints.push(homographyPoint);
+      } else {
+        newHomographyPoints.push(oldPoint);
+      }
+    }
+    setHomographyPoints(newHomographyPoints);
   };
 
   const isComplete = () => {
-    if (isFirstImageLineValid && isSecondImageLineValid && isFirstMapLineValid && isSecondMapLineValid) return true;
-    return false;
+    return true;
+    // if (isFirstImageLineValid && isSecondImageLineValid && isFirstMapLineValid && isSecondMapLineValid) return true;
+    // return false;
   };
 
+  useEffect(() => {
+    console.log("current ", homographyPoints);
+  }, [homographyPoints]);
+
   const saveData = () => {
-    if (firstPoint && secondPoint && thirdPoint && fourthPoint) {
-      const calibrationData: CalibrationData = {
-        Lines: [
-          {
-            index: 0,
-            shapeType: "Lines",
-            points: [firstPoint, secondPoint],
-          },
-          {
-            index: 1,
-            shapeType: "Lines",
-            points: [thirdPoint, fourthPoint],
-          },
-        ],
-      };
-      triggerCalibrationDataChange(calibrationData);
-    } else {
-      console.log("something went wrong");
-    }
+    const calibrationData: CalibrationData = {
+      index: 0,
+      ShapeType: "Polygon",
+      Description: "This is a dummy data",
+      Points: homographyPoints ?? [],
+    };
+    console.log("saving ", calibrationData);
+    triggerCalibrationDataChange(calibrationData);
   };
 
   return (
@@ -136,12 +137,12 @@ export const SimplifiedCalibrationComponent = ({
         />
       </div>
 
-      <div style={{ display: "flex", padding: "20px 0px", justifyContent: "space-between" }}>
+      {/* <div style={{ display: "flex", padding: "20px 0px", justifyContent: "space-between" }}>
         <CalibrationStatus status={isFirstImageLineValid} message={"First line on the image"} />
         <CalibrationStatus status={isSecondImageLineValid} message={"Second parallel line on the image"} />
         <CalibrationStatus status={isFirstMapLineValid} message={"First line on the map"} />
         <CalibrationStatus status={isSecondMapLineValid} message={"Second parallel line on the map"} />
-      </div>
+      </div> */}
 
       <Button variant={"contained"} color="primary" onClick={saveData} disabled={!isComplete()}>
         Save

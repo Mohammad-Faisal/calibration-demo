@@ -33,7 +33,7 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
 
   points = points || ([] as ShapePoint[]);
 
-  const maxAllowedPoints = 4;
+  const maxAllowedPoints = 6;
 
   const [storedPoints, setStoredPoints] = useState<ShapePoint[]>([]);
   const [scaledPoints, setScaledPoints] = useState<ShapePoint[]>([]);
@@ -110,6 +110,14 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
   const updatePointsWhenShapeClicked = (id: any) => {
     // do nothing for now because we are dealing with 2 separate lines here
   };
+  const storedPointsForArea = [
+    storedPoints[0],
+    storedPoints[2],
+    storedPoints[4],
+    storedPoints[5],
+    storedPoints[3],
+    storedPoints[1],
+  ];
 
   return (
     <>
@@ -140,6 +148,17 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
           >
             <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(0, 2)} />
             <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(2, 4)} />
+            <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(4, 6)} />
+
+            {/* {storedPoints.length === 6 ? (
+              <PolyLineComponent fillColor={fillColor} points={storedPoints} />
+            ) : (
+              <>
+                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(0, 2)} />
+                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(2, 4)} />
+                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(4, 6)} />
+              </>
+            )} */}
           </svg>
         </div>
 

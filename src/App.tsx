@@ -20,50 +20,28 @@ function App() {
   const [surveyCalibration, setSurveyCalibration] = useState<SurveyCalibration>();
 
   const getCalibrationData = (data: CalibrationData) => {
-    console.log("found ", data);
-
-    const dataToSave: SurveyCalibration = {
+    const dataToSave = {
       Customer: "AMAG",
       Id: "56~1637156676748",
       Name: "First calibration",
       Description: "This calibration is the default for this site",
-      CalibrationData: data,
+      CalibrationData: [data],
+      LaneData: [],
     };
     setCalibrationData(data);
-    setSurveyCalibration(dataToSave);
-
-    const currentItems = localStorage.getItem("CAL_ITEMS");
-    const current = currentItems ? JSON.parse(currentItems) : [];
-    current.push(dataToSave);
-    // localStorage.setItem("CAL_ITEMS", JSON.stringify(current));
+    // setSurveyCalibration(dataToSave);
+    // console.log("saving ", data);
+    localStorage.setItem("CAL_ITEMS", JSON.stringify(data));
   };
-
-  const getCurrentItems = () => {
-    const currentItems = localStorage.getItem("CAL_ITEMS");
-    return currentItems ? JSON.parse(currentItems) : [];
-  };
-
-  const currentItems = getCurrentItems();
 
   return (
     <div className="App">
       <div>
-        {currentItems.map((item: any) => {
-          return (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px",
-                border: "1px solid",
-                margin: "10px",
-              }}
-            >
-              <div> {item.Name}</div>
-              <button onClick={() => setCalibrationData(item.CalibrationData)}> Edit This one</button>
-            </div>
-          );
-        })}
+        <div> {"Nothing"}</div>
+        <button onClick={() => setCalibrationData(JSON.parse(localStorage.getItem("CAL_ITEMS") ?? ""))}>
+          {" "}
+          Edit This one
+        </button>
       </div>
       <SimplifiedCalibrationComponent
         isEditMode={true}

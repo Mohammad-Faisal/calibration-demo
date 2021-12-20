@@ -8,52 +8,26 @@ export const useCalibrationToShapePointConverter = (calibrationData: Calibration
 
   useEffect(() => {
     if (!calibrationData) return;
-    const staticImagePoints = [
-      {
-        x: calibrationData?.Lines[0].points[0].x,
-        y: calibrationData?.Lines[0].points[0].y,
-        index: 0,
-      },
-      {
-        x: calibrationData?.Lines[0].points[1].x,
-        y: calibrationData?.Lines[0].points[1].y,
-        index: 1,
-      },
-      {
-        x: calibrationData?.Lines[1].points[0].x,
-        y: calibrationData?.Lines[1].points[0].y,
-        index: 2,
-      },
-      {
-        x: calibrationData?.Lines[1].points[1].x,
-        y: calibrationData?.Lines[1].points[1].y,
-        index: 3,
-      },
-    ];
+    if (calibrationData.Points.length === 0) return;
+
+    const staticImagePoints = [];
+    for (let i = 0; i < calibrationData.Points.length; i++) {
+      staticImagePoints.push({
+        x: calibrationData?.Points[i].x,
+        y: calibrationData?.Points[i].y,
+        index: i,
+      });
+    }
     setStaticImagePoints(staticImagePoints);
 
-    const mapImagePoints = [
-      {
-        x: calibrationData?.Lines[0].points[0].X,
-        y: calibrationData?.Lines[0].points[0].Y,
-        index: 0,
-      },
-      {
-        x: calibrationData?.Lines[0].points[1].X,
-        y: calibrationData?.Lines[0].points[1].Y,
-        index: 1,
-      },
-      {
-        x: calibrationData?.Lines[1].points[0].X,
-        y: calibrationData?.Lines[1].points[0].Y,
-        index: 2,
-      },
-      {
-        x: calibrationData?.Lines[1].points[1].X,
-        y: calibrationData?.Lines[1].points[1].Y,
-        index: 3,
-      },
-    ];
+    const mapImagePoints = [];
+    for (let i = 0; i < calibrationData.Points.length; i++) {
+      mapImagePoints.push({
+        x: calibrationData?.Points[i].X,
+        y: calibrationData?.Points[i].Y,
+        index: i,
+      });
+    }
     setMapImagePoints(mapImagePoints);
   }, [calibrationData]);
   return { staticImagePoints, mapImagePoints };
