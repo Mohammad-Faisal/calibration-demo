@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
 import { CalibrationData } from "@amagroup.io/amag-corelib";
+import { ImageCoordinates } from "@amagroup.io/amag-corelib";
 
 export const useCalibrationToShapePointConverter = (calibrationData: CalibrationData | undefined) => {
-  const [staticImagePoints, setStaticImagePoints] = useState<ShapePoint[]>([]);
-  const [mapImagePoints, setMapImagePoints] = useState<ShapePoint[]>([]);
+  const [staticImagePoints, setStaticImagePoints] = useState<ImageCoordinates[]>([]);
+  const [mapImagePoints, setMapImagePoints] = useState<ImageCoordinates[]>([]);
 
   useEffect(() => {
     if (!calibrationData) return;

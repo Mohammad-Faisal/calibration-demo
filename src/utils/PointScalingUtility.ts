@@ -1,11 +1,12 @@
-import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
+import { ImageCoordinates } from "@amagroup.io/amag-corelib";
+
 export class PointScalingUtility {
   static getScaledPoint = (point: number, scale: number) => {
     point = point || 0;
     return point * scale;
   };
 
-  static getScaledPoints = (points: ShapePoint[], scale: number) => {
+  static getScaledPoints = (points: ImageCoordinates[], scale: number) => {
     return points.map((p) => {
       return {
         ...p,

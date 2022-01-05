@@ -1,8 +1,8 @@
 import React from "react";
-import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
+import { ImageCoordinates } from "@amagroup.io/amag-corelib";
 
 interface PolyLineProps {
-  points: ShapePoint[];
+  points: ImageCoordinates[];
   fillColor: string;
 }
 export const PolyLineComponent = ({ points, fillColor }: PolyLineProps) => {

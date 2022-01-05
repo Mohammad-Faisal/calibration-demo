@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { CalibrationData, LaneData, SurveyCalibration } from "@amagroup.io/amag-corelib";
 import { StaticMapProps, SimplifiedCalibrationComponent } from "./SimplifiedCalibration";
-import { LaneDetectionCanvas } from "./LaneDataDetection/LaneDetectionCanvas";
 import { LaneDetectionComponent } from "./LaneDataDetection/LaneDetectionComponent";
 const normalImageUrl =
   "https://media.istockphoto.com/photos/road-in-mountains-picture-id491712724?k=20&m=491712724&s=612x612&w=0&h=Jm11Gd2r3G__G1ob1n3fMkmkgalzaJw79mT4DQD2yRc=";
@@ -35,6 +34,7 @@ function App() {
       LaneData: Object.values(laneData),
     } as SurveyCalibration;
     setSurveyCalibration(surveyCalibration);
+    localStorage.setItem("CALIBRATION", JSON.stringify(surveyCalibration));
   };
 
   const getCalibrationData = (data: CalibrationData) => {
@@ -64,14 +64,21 @@ function App() {
     });
   };
 
+  const editData = () => {
+    const savedData = JSON.parse(localStorage.getItem("CALIBRATION") ?? "");
+    const emptyObject: any = {};
+    savedData.LaneData.forEach((laneData: any) => {
+      emptyObject[laneData.index] = laneData;
+    });
+    setLaneData(emptyObject);
+    setCalibrationData(savedData.CalibrationData[0]);
+  };
+
   return (
     <div className="App">
       <div>
         <div> {"Nothing"}</div>
-        <button onClick={() => setCalibrationData(JSON.parse(localStorage.getItem("CAL_ITEMS") ?? ""))}>
-          {" "}
-          Edit This one
-        </button>
+        <button onClick={editData}> Edit This one</button>
       </div>
 
       <div style={{ margin: "20px" }}>

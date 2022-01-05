@@ -1,42 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
-import { ZoomController, DraggableShape, PolyLineComponent, StaticMapProps, StaticMapSrc } from "../misc";
+import { ZoomController, DraggableShape, PolyLineComponent, StaticMapProps, StaticMapSrc } from ".";
 import { CanvasUtility, PointScalingUtility } from "../utils";
-import { ImageType } from "./SimplifiedCalibrationComponent";
-
-export interface ShapePoint {
-  index: number;
-  x: number;
-  y: number;
-}
+import { ImageCoordinates } from "@amagroup.io/amag-corelib";
 
 interface CalibrationCanvasProps {
-  fillColor: string;
-  imageType: ImageType;
-  points: ShapePoint[];
-  onDataChangeTrigger: (data: ShapePoint[], imageType: ImageType) => void;
+  imageType: CalibrationSurfaceType;
+  points: ImageCoordinates[];
+  onDataChangeTrigger: (data: ImageCoordinates[], imageType: CalibrationSurfaceType) => void;
   isEditMode: boolean;
   imagePath?: string;
   staticMapProps?: StaticMapProps;
 }
 
-export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
-  imageType,
-  points,
-  staticMapProps,
-  isEditMode,
-  onDataChangeTrigger,
-  imagePath,
-  fillColor,
-}) => {
+export enum CalibrationSurfaceType {
+  STATIC_IMAGE,
+  STATIC_MAP,
+}
+
+const FILL_COLOR = "#f51717";
+const MAX_ALLOWED_POINTS = 10;
+
+export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = (props) => {
   const classes = useStyles();
+  const { imageType, points, staticMapProps, isEditMode, onDataChangeTrigger, imagePath } = props;
 
-  points = points || ([] as ShapePoint[]);
-
-  const maxAllowedPoints = 6;
-
-  const [storedPoints, setStoredPoints] = useState<ShapePoint[]>([]);
-  const [scaledPoints, setScaledPoints] = useState<ShapePoint[]>([]);
+  const [storedPoints, setStoredPoints] = useState<ImageCoordinates[]>([]);
+  const [scaledPoints, setScaledPoints] = useState<ImageCoordinates[]>([]);
   const [imageScale, setImageScale] = React.useState(1);
 
   // if the points array comes from the parent (while editing) change the stored components here
@@ -60,18 +50,18 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
   });
 
   const backgroundImageUrl = () => {
-    if (imageType === ImageType.STATIC_IMAGE) return imagePath;
+    if (imageType === CalibrationSurfaceType.STATIC_IMAGE) return imagePath;
     else if (staticMapProps) return StaticMapSrc(staticMapProps);
   };
 
   const addNewPoint = (e: React.MouseEvent) => {
     if (!isEditMode) return;
-    if (storedPoints.length >= maxAllowedPoints) return;
+    if (storedPoints.length >= MAX_ALLOWED_POINTS) return;
     const { px, py } = CanvasUtility.getCoordinatesOfClickedPoint(e, imageScale);
 
     setStoredPoints((prevStatePoints) => {
       const points = [...prevStatePoints];
-      const newPoint = { x: px, y: py } as ShapePoint;
+      const newPoint = { x: px, y: py } as ImageCoordinates;
       newPoint.index = points.length;
       points.push(newPoint);
       return points;
@@ -96,7 +86,7 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
   const updatePointsBasedOnChangeOfShape = (newX: any, newY: any, index: any) => {
     if (!isEditMode) return;
     const updatedPoints = [...storedPoints];
-    const updatedPoint = updatedPoints.find((x) => x.index === index) as ShapePoint;
+    const updatedPoint = updatedPoints.find((x) => x.index === index) as ImageCoordinates;
     if (!updatedPoint) return;
     updatedPoint.x = PointScalingUtility.getUnScaledPoint(newX, imageScale);
     updatedPoint.y = PointScalingUtility.getUnScaledPoint(newY, imageScale);
@@ -146,19 +136,7 @@ export const CalibrationCanvas: React.FC<CalibrationCanvasProps> = ({
               backgroundRepeat: "no-repeat",
             }}
           >
-            <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(0, 2)} />
-            <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(2, 4)} />
-            <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(4, 6)} />
-
-            {/* {storedPoints.length === 6 ? (
-              <PolyLineComponent fillColor={fillColor} points={storedPoints} />
-            ) : (
-              <>
-                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(0, 2)} />
-                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(2, 4)} />
-                <PolyLineComponent fillColor={fillColor} points={storedPoints.slice(4, 6)} />
-              </>
-            )} */}
+            <PolyLineComponent fillColor={FILL_COLOR} points={storedPoints} />
           </svg>
         </div>
 

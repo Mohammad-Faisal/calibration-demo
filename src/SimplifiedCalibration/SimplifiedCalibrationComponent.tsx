@@ -1,17 +1,11 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 import { useState, useEffect } from "react";
-import { CalibrationCanvas, ShapePoint } from "./SimplifiedCalibrationCanvas";
-import { CalibrationStatus } from "../misc";
+import { CalibrationCanvas, CalibrationSurfaceType } from "../misc";
 import { MapUtility } from "../utils";
 import { StaticMapProps } from "../misc/StaticMapImage";
 import { useCalibrationToShapePointConverter } from "../hooks";
-import { CalibrationData, HomographyPoint } from "@amagroup.io/amag-corelib";
-
-export enum ImageType {
-  STATIC_IMAGE,
-  STATIC_MAP,
-}
+import { CalibrationData, HomographyPoint, ImageCoordinates } from "@amagroup.io/amag-corelib";
 
 interface SimplifiedCalibrationProps {
   isEditMode: boolean;
@@ -46,16 +40,14 @@ export const SimplifiedCalibrationComponent = ({
   // const { isImageLineValid: isSecondImageLineValid, isMapLineValid: isSecondMapLineValid } =
   //   useCalibrationLineValidityChecker(thirdPoint, fourthPoint);
 
-  const color = "#f51717";
-
   const { staticImagePoints, mapImagePoints } = useCalibrationToShapePointConverter(calibrationData);
 
   // convert the calibration data form the parent into the points data for this component
 
   const calculateHomographyPointFromShapePointData = (
     prev: HomographyPoint | undefined,
-    newData: ShapePoint,
-    imageType: ImageType,
+    newData: ImageCoordinates,
+    imageType: CalibrationSurfaceType,
     index: number
   ): HomographyPoint | undefined => {
     if (!newData) return;
@@ -64,7 +56,7 @@ export const SimplifiedCalibrationComponent = ({
     if (prev) newPoint = { ...prev };
     else newPoint = { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index };
 
-    if (imageType === ImageType.STATIC_IMAGE) {
+    if (imageType === CalibrationSurfaceType.STATIC_IMAGE) {
       newPoint.x = newData.x;
       newPoint.y = newData.y;
     } else {
@@ -79,7 +71,7 @@ export const SimplifiedCalibrationComponent = ({
     return newPoint;
   };
 
-  const receiveData = (data: ShapePoint[], imageType: ImageType) => {
+  const receiveData = (data: ImageCoordinates[], imageType: CalibrationSurfaceType) => {
     // const currentLength = data.length;
     const currentLength = homographyPoints.length;
     const newHomographyPoints: HomographyPoint[] = [];
@@ -122,27 +114,19 @@ export const SimplifiedCalibrationComponent = ({
         <CalibrationCanvas
           isEditMode={isEditMode}
           imagePath={staticImageSrc}
-          imageType={ImageType.STATIC_IMAGE}
-          fillColor={color}
+          imageType={CalibrationSurfaceType.STATIC_IMAGE}
           onDataChangeTrigger={receiveData}
           points={staticImagePoints}
         />
+
         <CalibrationCanvas
           isEditMode={isEditMode}
-          imageType={ImageType.STATIC_MAP}
-          fillColor={color}
+          imageType={CalibrationSurfaceType.STATIC_MAP}
           staticMapProps={staticMapProps}
           onDataChangeTrigger={receiveData}
           points={mapImagePoints}
         />
       </div>
-
-      {/* <div style={{ display: "flex", padding: "20px 0px", justifyContent: "space-between" }}>
-        <CalibrationStatus status={isFirstImageLineValid} message={"First line on the image"} />
-        <CalibrationStatus status={isSecondImageLineValid} message={"Second parallel line on the image"} />
-        <CalibrationStatus status={isFirstMapLineValid} message={"First line on the map"} />
-        <CalibrationStatus status={isSecondMapLineValid} message={"Second parallel line on the map"} />
-      </div> */}
 
       <Button variant={"contained"} color="primary" onClick={saveData} disabled={!isComplete()}>
         Save

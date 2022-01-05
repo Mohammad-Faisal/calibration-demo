@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import Draggable from "react-draggable";
-import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
+import { ImageCoordinates } from "@amagroup.io/amag-corelib";
 
 interface DraggableShapeProps {
-  shapePoint: ShapePoint;
+  shapePoint: ImageCoordinates;
   editMode: boolean;
   onChange?: any;
   onRemove?: any;
