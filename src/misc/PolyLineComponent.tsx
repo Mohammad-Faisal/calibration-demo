@@ -1,5 +1,5 @@
 import React from "react";
-import { ShapePoint } from "../SimplifiedCalibrationCanvas";
+import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
 
 interface PolyLineProps {
   points: ShapePoint[];

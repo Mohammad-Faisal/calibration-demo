@@ -1,4 +1,4 @@
-import { ShapePoint } from "../SimplifiedCalibrationCanvas";
+import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
 export class PointScalingUtility {
   static getScaledPoint = (point: number, scale: number) => {
     point = point || 0;

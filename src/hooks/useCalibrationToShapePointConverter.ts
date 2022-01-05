@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShapePoint } from "../SimplifiedCalibrationCanvas";
+import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
 import { CalibrationData } from "@amagroup.io/amag-corelib";
 
 export const useCalibrationToShapePointConverter = (calibrationData: CalibrationData | undefined) => {

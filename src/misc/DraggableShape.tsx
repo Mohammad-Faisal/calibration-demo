@@ -1,7 +1,7 @@
-import React ,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 import Draggable from "react-draggable";
-import { ShapePoint } from "../SimplifiedCalibrationCanvas";
+import { ShapePoint } from "../SimplifiedCalibration/SimplifiedCalibrationCanvas";
 
 interface DraggableShapeProps {
   shapePoint: ShapePoint;
