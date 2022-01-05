@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CalibrationData, LaneData, SurveyCalibration } from "@amagroup.io/amag-corelib";
-import { StaticMapProps, SimplifiedCalibrationComponent } from "./SimplifiedCalibration";
-import { LaneDetectionComponent } from "./LaneDataDetection/LaneDetectionComponent";
+import { StaticMapProps, CalibrationComponent } from "./SurveyCalibration";
+import { LaneDetectionComponent } from "./SurveyCalibration/LaneDetectionComponent";
 const normalImageUrl =
   "https://media.istockphoto.com/photos/road-in-mountains-picture-id491712724?k=20&m=491712724&s=612x612&w=0&h=Jm11Gd2r3G__G1ob1n3fMkmkgalzaJw79mT4DQD2yRc=";
+
+interface LaneDataMap {
+  [key: string]: LaneData;
+}
+
+interface CalibrationDataMap {
+  [key: string]: CalibrationData;
+}
 
 function App() {
   const mapProps: StaticMapProps = {
@@ -16,12 +24,10 @@ function App() {
     zoom: 20,
     hideLabels: false,
   };
-  interface LaneDataMap {
-    [key: string]: LaneData;
-  }
-  const [calibrationData, setCalibrationData] = useState<CalibrationData | undefined>();
+
   const [laneData, setLaneData] = useState<LaneDataMap>({});
   const [surveyCalibration, setSurveyCalibration] = useState<SurveyCalibration | undefined>();
+  const [calibrationData, setCalibrationData] = useState<CalibrationDataMap>({});
 
   const showFinalData = () => {
     const surveyCalibration: SurveyCalibration = {
@@ -30,7 +36,7 @@ function App() {
       Id: "56~1637156676748",
       Name: "First calibration",
       Description: "This calibration is the default for this site",
-      CalibrationData: calibrationData ? [calibrationData] : [],
+      CalibrationData: Object.values(calibrationData),
       LaneData: Object.values(laneData),
     } as SurveyCalibration;
     setSurveyCalibration(surveyCalibration);
@@ -38,7 +44,10 @@ function App() {
   };
 
   const getCalibrationData = (data: CalibrationData) => {
-    setCalibrationData(data);
+    setCalibrationData((prev) => {
+      prev[data.index] = data;
+      return prev;
+    });
   };
 
   const getLaneData = (receivedLaneData: LaneData) => {
@@ -71,8 +80,18 @@ function App() {
       emptyObject[laneData.index] = laneData;
     });
     setLaneData(emptyObject);
-    setCalibrationData(savedData.CalibrationData[0]);
+    setCalibrationData({ "0": savedData.CalibrationData[0] });
   };
+
+  useEffect(() => {
+    const calibrationData: CalibrationData = {
+      index: 0,
+      ShapeType: "Polygon",
+      Description: "Calibration Data",
+      Points: [],
+    };
+    setCalibrationData({ "0": calibrationData });
+  }, []);
 
   return (
     <div className="App">
@@ -85,13 +104,16 @@ function App() {
         Final Data: <pre style={{ height: "100%" }}>{JSON.stringify(surveyCalibration, null, 2)}</pre>
       </div>
 
-      <SimplifiedCalibrationComponent
-        isEditMode={true}
-        calibrationData={calibrationData}
-        staticImageSrc={normalImageUrl}
-        staticMapProps={mapProps}
-        triggerCalibrationDataChange={getCalibrationData}
-      />
+      {Object.values(calibrationData).map((singleCalibrationData) => (
+        <CalibrationComponent
+          key={singleCalibrationData.index}
+          isEditMode={true}
+          calibrationData={singleCalibrationData}
+          staticImageSrc={normalImageUrl}
+          staticMapProps={mapProps}
+          triggerCalibrationDataChange={getCalibrationData}
+        />
+      ))}
 
       {Object.values(laneData).map((singleLaneData) => (
         <LaneDetectionComponent

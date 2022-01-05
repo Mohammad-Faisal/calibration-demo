@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { LaneData, ImageCoordinates } from "@amagroup.io/amag-corelib";
-import { CalibrationCanvas, CalibrationSurfaceType } from "../misc";
+import { CalibrationCanvas, CalibrationSurfaceType } from "./misc";
 
 interface LaneDetectionComponentProps {
   isEditMode: boolean;

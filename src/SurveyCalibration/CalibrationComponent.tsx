@@ -1,17 +1,16 @@
 import React from "react";
-import { Button } from "@material-ui/core";
 import { useState, useEffect } from "react";
-import { CalibrationCanvas, CalibrationSurfaceType } from "../misc";
-import { MapUtility } from "../utils";
-import { StaticMapProps } from "../misc/StaticMapImage";
-import { useCalibrationToShapePointConverter } from "../hooks";
+import { CalibrationCanvas, CalibrationSurfaceType } from "./misc";
+import { MapUtility } from "./utils";
+import { StaticMapProps } from "./misc/StaticMapImage";
+import { useCalibrationToShapePointConverter } from "./hooks";
 import { CalibrationData, HomographyPoint, ImageCoordinates } from "@amagroup.io/amag-corelib";
 
-interface SimplifiedCalibrationProps {
+interface CalibrationProps {
   isEditMode: boolean;
   staticImageSrc: string;
   staticMapProps: StaticMapProps;
-  calibrationData: CalibrationData | undefined;
+  calibrationData: CalibrationData;
   triggerCalibrationDataChange: (data: CalibrationData) => void;
 }
 
@@ -24,27 +23,13 @@ const emptyData = [
   { x: -1, y: -1, X: -1, Y: -1, lat: -1, lng: -1, index: 5 },
 ];
 
-export const SimplifiedCalibrationComponent = ({
-  isEditMode,
-  staticImageSrc,
-  staticMapProps,
-  triggerCalibrationDataChange,
-  calibrationData,
-}: SimplifiedCalibrationProps) => {
+export const CalibrationComponent = (props: CalibrationProps) => {
+  const { isEditMode, staticImageSrc, staticMapProps, triggerCalibrationDataChange, calibrationData } = props;
+
   const [homographyPoints, setHomographyPoints] = useState<HomographyPoint[]>(emptyData);
-
-  console.log("calibration data is ", calibrationData);
-  // const { isImageLineValid: isFirstImageLineValid, isMapLineValid: isFirstMapLineValid } =
-  //   useCalibrationLineValidityChecker(firstPoint, secondPoint);
-
-  // const { isImageLineValid: isSecondImageLineValid, isMapLineValid: isSecondMapLineValid } =
-  //   useCalibrationLineValidityChecker(thirdPoint, fourthPoint);
-
   const { staticImagePoints, mapImagePoints } = useCalibrationToShapePointConverter(calibrationData);
 
-  // convert the calibration data form the parent into the points data for this component
-
-  const calculateHomographyPointFromShapePointData = (
+  const calculateHomographyPointFromImageCoordinates = (
     prev: HomographyPoint | undefined,
     newData: ImageCoordinates,
     imageType: CalibrationSurfaceType,
@@ -66,19 +51,17 @@ export const SimplifiedCalibrationComponent = ({
       newPoint.lat = coOrdinates.Lat;
       newPoint.lng = coOrdinates.Lng;
     }
-    // console.log("new points is ", newPoint);
 
     return newPoint;
   };
 
   const receiveData = (data: ImageCoordinates[], imageType: CalibrationSurfaceType) => {
-    // const currentLength = data.length;
     const currentLength = homographyPoints.length;
     const newHomographyPoints: HomographyPoint[] = [];
     for (let i = 0; i < currentLength; i++) {
       const oldPoint = homographyPoints[i];
       if (data[i]) {
-        const homographyPoint = calculateHomographyPointFromShapePointData(oldPoint, data[i], imageType, i);
+        const homographyPoint = calculateHomographyPointFromImageCoordinates(oldPoint, data[i], imageType, i);
         if (homographyPoint) newHomographyPoints.push(homographyPoint);
       } else {
         newHomographyPoints.push(oldPoint);
@@ -87,26 +70,13 @@ export const SimplifiedCalibrationComponent = ({
     setHomographyPoints(newHomographyPoints);
   };
 
-  const isComplete = () => {
-    return true;
-    // if (isFirstImageLineValid && isSecondImageLineValid && isFirstMapLineValid && isSecondMapLineValid) return true;
-    // return false;
-  };
-
   useEffect(() => {
-    console.log("current ", homographyPoints);
-  }, [homographyPoints]);
-
-  const saveData = () => {
-    const calibrationData: CalibrationData = {
-      index: 0,
-      ShapeType: "Polygon",
-      Description: "This is a dummy data",
+    const updated: CalibrationData = {
+      ...calibrationData,
       Points: homographyPoints ?? [],
     };
-    console.log("saving ", calibrationData);
-    triggerCalibrationDataChange(calibrationData);
-  };
+    triggerCalibrationDataChange(updated);
+  }, [homographyPoints]);
 
   return (
     <div style={{ display: "grid", justifyItems: "center", gridGap: "10px", width: "100vw" }}>
@@ -126,14 +96,6 @@ export const SimplifiedCalibrationComponent = ({
           onDataChangeTrigger={receiveData}
           points={mapImagePoints}
         />
-      </div>
-
-      <Button variant={"contained"} color="primary" onClick={saveData} disabled={!isComplete()}>
-        Save
-      </Button>
-
-      <div style={{ margin: "20px" }}>
-        Calibration Result: <pre style={{ height: "100%" }}>{JSON.stringify(calibrationData, null, 2)}</pre>
       </div>
     </div>
   );
